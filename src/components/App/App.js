@@ -7,17 +7,73 @@ class App extends Component {
 		super( props );
 		
 		this.state = {
-			begun: false
+			begun: false,
+			deckId: '',
+			cardsToDeal: [],
+			playerHand: [],
+			dealerHand: []
 		}
 		
-		this.startGame = this.startGame.bind( this ); 
-		
+		this.startGame = this.startGame.bind( this );
+		this.initializeHands = this.initializeHands.bind( this );
+		this.dealCards = this.dealCards.bind( this );
 	}
+	
+	// lifecycle functions
+	
+	componentDidMount() {
+		// load deck
+		fetch( 'https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1' )
+			.then( response => response.json() )
+			.then( data => this.setState({ deckId: data.deck_id }) );
+	}
+	
+	// custom functions
+	
+	dealCards( numberOfCards, target ) {
+		// first draw cards
+		const urlToGetCards = 'https://deckofcardsapi.com/api/deck/' + this.state.deckId + '/draw/?count=' + numberOfCards;
+		fetch( urlToGetCards )
+			.then( response => response.json() )
+			.then( data => {
+				// then deal cards
+				let urlToAddCardsToHand = 'https://deckofcardsapi.com/api/deck/' + this.state.deckId + '/pile/' + target + 'Hand/add/?cards=' + data.cards.map( card => card.code ).join(',');
+				fetch( urlToAddCardsToHand )
+					.then( response => response.json() )
+					.then( data => {
+						console.log( 'cards dealt' );
+						fetch( 'https://deckofcardsapi.com/api/deck/' + this.state.deckId + '/pile/' + target + 'Hand/list' )
+							.then( response => response.json() )
+							.then( data => {
+								if( target === 'player' ) {
+									this.setState({
+										playerHand: this.state.playerHand.concat( data.piles.playerHand.cards )
+									})
+									console.log( this.state.playerHand );
+								} else if ( target === 'dealer' ) {
+									this.setState({
+										dealerHand: this.state.dealerHand.concat( data.piles.dealerHand.cards )
+									})
+								}
+							})			
+						})
+					})
+				}
+
+	
+	
+	
+	initializeHands () {
+
+		this.dealCards( 2, 'player' );
+
+	};
 	
 	startGame() {
 		this.setState({
 			begun: true
-		})
+		});
+		this.initializeHands();
 	}
 	
 	render() {
@@ -29,8 +85,8 @@ class App extends Component {
 			} else {
 				return(
 					<div className="App">
-						<Player type={ "Dealer" }/>
-						<Player type={ "Player" }/>
+						<Player type={ "Dealer" } hand={ this.state.dealerHand } />
+						<Player type={ "Player" } hand={ this.state.playerHand } />
 					</div>
 				)
 			}
@@ -38,7 +94,7 @@ class App extends Component {
 		
 		return (
 			<main>
-				<h1>Blackjack</h1>
+				<h1>Blackjack: DeckId = {this.state.deckId}</h1>
 				{ renderNewGame() }
 			</main>
 		);
