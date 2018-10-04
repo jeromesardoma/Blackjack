@@ -25,7 +25,10 @@ class Player extends Component {
 	
 	render () {
 		const cards = this.state.hand.map( card => 
-			<img src={ card.image } alt={ card.code } key={ card.code }></img>
+			<img src={ card.image } 
+				alt={ card.code } 
+				key={ card.code }
+				style={{ "height": 200 }}></img>
 		);			
 		return(
 			<div>

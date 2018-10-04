@@ -89,8 +89,8 @@ class App extends Component {
 		};
 		
 		return (
-			<main>
-				<h1>Blackjack</h1>
+			<main style={{ "textAlign": "center" }} > 
+				<h1 style={{ "textAlign": "center" }}>Blackjack</h1>
 				{ renderNewGame() }
 			</main>
 		);
