@@ -4,27 +4,14 @@ class Player extends Component {
 	constructor( props ) {
 		super( props );
 		
-		this.state = {
-			hand: []
-		}
-		
-	}
-	
-	componentWillReceiveProps( nextProps ) {
-		// to prevent same hand from showing twice on initialization?
-		if( nextProps.hand !== this.props.hand ) {
-			this.setState({
-				hand: this.state.hand.concat( nextProps.hand )
-			});
-		}
 	}
 	
 	componentDidUpdate() {
-		console.log( this.props.type + "'s hand: " + this.state.hand.map( card => card.code ).join(', ') );
+		console.log( this.props.type + "'s hand: " + this.props.hand.map( card => card.code ).join(', ') );
 	}
 	
 	render () {
-		const cards = this.state.hand.map( card => 
+		const cards = this.props.hand.map( card => 
 			<img src={ card.image } 
 				alt={ card.code } 
 				key={ card.code }
@@ -33,6 +20,7 @@ class Player extends Component {
 		return(
 			<div>
 				<h3>{ this.props.type }</h3>
+				<h5>Score: { this.props.scoreOf( this.props.type.toLowerCase() ) } </h5>
 				<section>
 					{ cards }
 				</section>

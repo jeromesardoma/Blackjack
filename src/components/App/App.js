@@ -19,6 +19,7 @@ class App extends Component {
 		this.startGame = this.startGame.bind( this );
 		this.initializeHands = this.initializeHands.bind( this );
 		this.dealCards = this.dealCards.bind( this );
+		this.scoreOf = this.scoreOf.bind( this );
 	}
 	
 	// lifecycle functions
@@ -60,12 +61,14 @@ class App extends Component {
 							.then( data => {
 								if( target === 'player' ) {
 									this.setState({
-										playerHand: this.state.playerHand.concat( data.piles.playerHand.cards )
+										playerHand: this.state.playerHand.concat( data.piles.playerHand.cards ),
+										playerScore: this.state.playerScore + this.scoreOf( 'player' )
 									});
 									console.log( numberOfCards + ' cards dealt to ' + target + '.');
 								} else if ( target === 'dealer' ) {
 									this.setState({
-										dealerHand: this.state.dealerHand.concat( data.piles.dealerHand.cards )
+										dealerHand: this.state.dealerHand.concat( data.piles.dealerHand.cards ),
+										dealerScore: this.state.dealerScore + this.scoreOf( 'dealer' )
 									})
 									console.log( numberOfCards + ' cards dealt to ' + target + '.');
 								}
@@ -78,14 +81,30 @@ class App extends Component {
 		let hand = ( target === 'player' ) ? this.state.playerHand : this.state.dealerHand;
 		// establish value of each card based on card.value
 		
-		const cardValue = ( card ) => {
-			switch( card.value ) {
-				case 'ACE':
-					return [1, 11];
-					break;
-				case 
+		const handContainsAnAce = () => {
+			return hand.some( card => card.value === 'ACE' );
+		}
+
+		let score = () => {
+			if( hand !== [] ) {
+				return hand.map( card => {
+					switch( card.value ) {
+						case 'ACE':
+							return 11;
+							// if target has an ace, and score is greater than 21, subtract 10 from score
+							break;
+						case 0 || 'JACK' || 'QUEEN' || 'KING' :
+							return 10;
+							break;
+						default:
+							return card.value;
+							break;
+					}
+				} ).reduce( (a, c) => a + c );
 			}
 		}
+			
+		return ( handContainsAnAce() && ( score() > 21 ) ) ? score() - 10 : score();
 	}
 	
 	render() {
@@ -97,8 +116,12 @@ class App extends Component {
 			} else {
 				return(
 					<div className="App">
-						<Player type={ "Dealer" } hand={ this.state.dealerHand } />
-						<Player type={ "Player" } hand={ this.state.playerHand } />
+						<Player type={ "Dealer" } 
+							hand={ this.state.dealerHand } 
+							score={ this.scoreOf( 'dealer' ) } />
+						<Player type={ "Player" } 
+							hand={ this.state.playerHand }
+							score={ this.scoreOf( 'player' ) } />
 					</div>
 				)
 			}
