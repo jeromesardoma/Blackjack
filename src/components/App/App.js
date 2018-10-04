@@ -11,7 +11,9 @@ class App extends Component {
 			deckId: '',
 			cardsToDeal: [],
 			playerHand: [],
-			dealerHand: []
+			playerScore: 0,
+			dealerHand: [],
+			dealerScore: 0
 		}
 		
 		this.startGame = this.startGame.bind( this );
@@ -29,6 +31,18 @@ class App extends Component {
 	}
 	
 	// custom functions
+	
+	startGame() {
+		this.setState({
+			begun: true
+		});
+		this.initializeHands();
+	}
+	
+	initializeHands () {
+		this.dealCards( 2, 'player' );
+		this.dealCards( 2, 'dealer' );
+	};
 	
 	dealCards( numberOfCards, target ) {
 		// first draw cards
@@ -59,17 +73,19 @@ class App extends Component {
 						})
 					}).catch( error => console.log( 'Cards not dealt.' ) );
 				}
-
-	initializeHands () {
-		this.dealCards( 2, 'player' );
-		this.dealCards( 2, 'dealer' );
-	};
 	
-	startGame() {
-		this.setState({
-			begun: true
-		});
-		this.initializeHands();
+	scoreOf( target ) {
+		let hand = ( target === 'player' ) ? this.state.playerHand : this.state.dealerHand;
+		// establish value of each card based on card.value
+		
+		const cardValue = ( card ) => {
+			switch( card.value ) {
+				case 'ACE':
+					return [1, 11];
+					break;
+				case 
+			}
+		}
 	}
 	
 	render() {
