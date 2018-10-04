@@ -41,32 +41,28 @@ class App extends Component {
 				fetch( urlToAddCardsToHand )
 					.then( response => response.json() )
 					.then( data => {
-						console.log( 'cards dealt' );
 						fetch( 'https://deckofcardsapi.com/api/deck/' + this.state.deckId + '/pile/' + target + 'Hand/list' )
 							.then( response => response.json() )
 							.then( data => {
 								if( target === 'player' ) {
 									this.setState({
 										playerHand: this.state.playerHand.concat( data.piles.playerHand.cards )
-									})
-									console.log( this.state.playerHand );
+									});
+									console.log( numberOfCards + ' cards dealt to ' + target + '.');
 								} else if ( target === 'dealer' ) {
 									this.setState({
 										dealerHand: this.state.dealerHand.concat( data.piles.dealerHand.cards )
 									})
+									console.log( numberOfCards + ' cards dealt to ' + target + '.');
 								}
 							})			
 						})
-					})
+					}).catch( error => console.log( 'Cards not dealt.' ) );
 				}
 
-	
-	
-	
 	initializeHands () {
-
 		this.dealCards( 2, 'player' );
-
+		this.dealCards( 2, 'dealer' );
 	};
 	
 	startGame() {
@@ -94,7 +90,7 @@ class App extends Component {
 		
 		return (
 			<main>
-				<h1>Blackjack: DeckId = {this.state.deckId}</h1>
+				<h1>Blackjack</h1>
 				{ renderNewGame() }
 			</main>
 		);
