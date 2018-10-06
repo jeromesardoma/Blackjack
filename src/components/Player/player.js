@@ -20,7 +20,7 @@ class Player extends Component {
 		return(
 			<div>
 				<h3>{ this.props.type }</h3>
-				<h5>Score: { this.props.scoreOf( this.props.type.toLowerCase() ) } </h5>
+				<h5>{ 'Score: ' + this.props.score }</h5>
 				<section>
 					{ cards }
 				</section>

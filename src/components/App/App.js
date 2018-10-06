@@ -100,8 +100,8 @@ class App extends Component {
 							return card.value;
 							break;
 					}
-				} ).reduce( (a, c) => a + c );
-			}
+				} ).reduce( (a, c) => a + c, 0 );
+			} 
 		}
 			
 		return ( handContainsAnAce() && ( score() > 21 ) ) ? score() - 10 : score();
@@ -110,25 +110,28 @@ class App extends Component {
 	render() {
 		const renderNewGame = () => {
 			if( this.state.begun === false ) {
+				console.log( 'before render: ' + this.state.dealerHand );
 				return(
 					<button onClick={ this.startGame }>New Game</button>
 				)
 			} else {
+				console.log( 'after render: ' + this.state.dealerHand )
 				return(
 					<div className="App">
-						<Player type={ "Dealer" } 
-							hand={ this.state.dealerHand } 
-							score={ this.scoreOf( 'dealer' ) } />
-						<Player type={ "Player" } 
+						<Player type={ "Dealer" }
+							hand={ this.state.dealerHand }
+							score={ this.state.dealerScore }
+							/>
+						<Player type={ "Player" }				
 							hand={ this.state.playerHand }
-							score={ this.scoreOf( 'player' ) } />
+							score={ this.state.playerScore }
+							/>
 					</div>
 				)
 			}
 		};
-		
 		return (
-			<main style={{ "textAlign": "center" }} > 
+			<main style={{ "textAlign": "center" }} >
 				<h1 style={{ "textAlign": "center" }}>Blackjack</h1>
 				{ renderNewGame() }
 			</main>
