@@ -96,7 +96,16 @@ class App extends Component {
 						return 11;
 						// if target has an ace, and score is greater than 21, subtract 10 from score
 						break;
-					case ( 0 || 'JACK' || 'QUEEN' || 'KING' ):
+					case 0:
+						return 10;
+						break;
+					case 'JACK':
+						return 10;
+						break;
+					case 'QUEEN':
+						return 10;
+						break;
+					case 'KING':
 						return 10;
 						break;
 					default:
