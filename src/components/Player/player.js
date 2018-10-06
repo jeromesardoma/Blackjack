@@ -6,7 +6,7 @@ class Player extends Component {
 		
 	}
 	
-	componentDidUpdate() {
+	componentDidMount() {
 		console.log( this.props.type + "'s hand: " + this.props.hand.map( card => card.code ).join(', ') );
 	}
 	
@@ -19,8 +19,8 @@ class Player extends Component {
 		);			
 		return(
 			<div>
-				<h3>{ this.props.type }</h3>
-				<h5>{ 'Score: ' + this.props.score }</h5>
+				<h3>{ this.props.type.substr(0,1).toUpperCase() + this.props.type.substr(1) }</h3>
+				<h5>Score: { this.props.score }</h5>
 				<section>
 					{ cards }
 				</section>
