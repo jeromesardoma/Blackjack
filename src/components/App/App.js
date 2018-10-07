@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import Player from '../Player/player';
+import ActionBar from '../ActionBar/actionbar';
 
 class App extends Component {
 	constructor( props ) {
@@ -20,6 +21,7 @@ class App extends Component {
 		this.dealCards = this.dealCards.bind( this );
 		this.getHandOf = this.getHandOf.bind( this );
 		this.getScoreOf = this.getScoreOf.bind( this );
+
 	}
 	
 	// lifecycle functions
@@ -55,7 +57,7 @@ class App extends Component {
 			.then( data => {
 				// then deal cards
 				let urlToAddCardsToHand = 'https://deckofcardsapi.com/api/deck/' + this.state.deckId + '/pile/' + target + 'Hand/add/?cards=' + data.cards.map( card => card.code ).join(',');
-				return fetch( urlToAddCardsToHand )
+				fetch( urlToAddCardsToHand )
 					.then( response => response.json() )
 					.then( data => this.getHandOf( target ) )
 					}).catch( error => console.log( 'Cards not dealt.' ) );
@@ -67,7 +69,7 @@ class App extends Component {
 			.then( data => {
 				if( target === 'player' ) {
 					this.setState({
-						playerHand: this.state.playerHand.concat( data.piles.playerHand.cards ),
+						playerHand: data.piles.playerHand.cards
 					});
 					console.log( target + "'s cards are " + data.piles.playerHand.cards.map( card => card.code ).join(','));
 				} else if ( target === 'dealer' ) {
@@ -119,16 +121,18 @@ class App extends Component {
 			
 		if( target === 'player' ) {
 			this.setState({
-				playerScore: this.state.playerScore + result
+				playerScore: result
 			})
 		} else if ( target === 'dealer' ) {
 			this.setState({
-				dealerScore: this.state.dealerScore + result
+				dealerScore: result
 			})
 		}
 	}
 	
 	render() {
+		const playerScore = this.state.playerScore;
+		const dealerScore = this.state.dealerScore;
 		const renderGame = () => {
 			if( this.state.begun === false ) {
 				return(
@@ -145,7 +149,13 @@ class App extends Component {
 						<Player
 							type={ 'player' }
 							hand={ this.state.playerHand }
-							score={ this.state.playerScore }
+							score={ playerScore }
+						/>
+						<ActionBar
+							dealerScore={ dealerScore }
+							playerScore={ playerScore }
+							startGame={ this.startGame }
+							hit={ this.dealCards }
 						/>
 					</div>
 				)

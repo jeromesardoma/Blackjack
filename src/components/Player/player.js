@@ -1,4 +1,5 @@
 import React, { Component } from 'react'; 
+import './player.css';
 
 class Player extends Component {
 	constructor( props ) {
@@ -11,11 +12,12 @@ class Player extends Component {
 	}
 	
 	render () {
-		const cards = this.props.hand.map( card => 
-			<img src={ card.image } 
+		const cards = this.props.hand.map( (card, index ) => 
+			<img 
+				src={ ( index === 0 && this.props.type === 'dealer' ) ? 'facedowncardv2.png' : card.image } 
 				alt={ card.code } 
 				key={ card.code }
-				style={{ "height": 200 }}></img>
+				style={{ "height": 150 }}></img>
 		);			
 		return(
 			<div>

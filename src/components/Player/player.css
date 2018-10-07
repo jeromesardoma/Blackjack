@@ -1,0 +1,7 @@
+#dealerCoveredCard {
+    height: 200;
+    width: 140;
+    border-radius: 3%;
+    background-color: darkred;
+    position: fixed;
+}
