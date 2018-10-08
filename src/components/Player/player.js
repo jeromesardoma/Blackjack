@@ -14,7 +14,7 @@ class Player extends Component {
 	render () {
 		const cards = this.props.hand.map( (card, index ) => 
 			<img 
-				src={ ( index === 0 && this.props.type === 'dealer' ) ? 'facedowncardv2.png' : card.image } 
+				src={ ( index === 0 && this.props.type === 'dealer' && this.props.isDealersTurn === false ) ? 'facedowncardv2.png' : card.image } 
 				alt={ card.code } 
 				key={ card.code }
 				style={{ "height": 150 }}></img>
@@ -22,7 +22,7 @@ class Player extends Component {
 		return(
 			<div>
 				<h3>{ this.props.type.substr(0,1).toUpperCase() + this.props.type.substr(1) }</h3>
-				<h5>Score: { this.props.score }</h5>
+				{ this.props.isDealersTurn === false ? null : <h5>Score: { this.props.score }</h5> }
 				<section>
 					{ cards }
 				</section>

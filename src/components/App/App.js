@@ -13,7 +13,9 @@ class App extends Component {
 			playerHand: [],
 			playerScore: 0,
 			dealerHand: [],
-			dealerScore: 0
+			dealerScore: 0,
+			isDealersTurn: false,
+			winner: ''
 		}
 		
 		this.startGame = this.startGame.bind( this );
@@ -21,7 +23,10 @@ class App extends Component {
 		this.dealCards = this.dealCards.bind( this );
 		this.getHandOf = this.getHandOf.bind( this );
 		this.getScoreOf = this.getScoreOf.bind( this );
-
+		this.playerBusts = this.playerBusts.bind( this );
+		this.startDealersTurn = this.startDealersTurn.bind( this );
+		this.evaluateWinner = this.evaluateWinner.bind( this );
+		this.setWinner = this.setWinner.bind( this );
 	}
 	
 	// lifecycle functions
@@ -35,6 +40,10 @@ class App extends Component {
 				this.initializeHands();
 			})
 	}
+
+	componentDidUpdate() {
+		console.log( "On component update, Dealer's score is: " + this.state.dealerScore );
+	}
 	
 	// custom functions
 	
@@ -46,7 +55,7 @@ class App extends Component {
 	
 	initializeHands () {
 		this.dealCards( 2, 'player' );
-		this.dealCards( 2, 'dealer' )
+		this.dealCards( 2, 'dealer' );
 	};
 	
 	dealCards( numberOfCards, target ) {
@@ -68,21 +77,25 @@ class App extends Component {
 			.then( response => response.json() )
 			.then( data => {
 				if( target === 'player' ) {
-					this.setState({
-						playerHand: data.piles.playerHand.cards
-					});
-					console.log( target + "'s cards are " + data.piles.playerHand.cards.map( card => card.code ).join(','));
-				} else if ( target === 'dealer' ) {
-					this.setState({
-						dealerHand: this.state.dealerHand.concat( data.piles.dealerHand.cards ),
+					this.setState( ( prevState ) => {
+						return {
+							playerHand: prevState.playerHand.concat( data.piles.playerHand.cards )
+								.slice( prevState.playerHand.length )
+							}
 					})
-					console.log( target + "'s cards are " + data.piles.dealerHand.cards.map( card => card.code ).join(','));
+				} else if ( target === 'dealer' ) {
+					this.setState( ( prevState ) => {
+						return {
+							dealerHand: prevState.dealerHand.concat( data.piles.dealerHand.cards )
+								.slice( prevState.dealerHand.length )
+							}
+					})
 				}
 				this.getScoreOf( target );
 			}).catch( error => 'Hand not retrieved.' )
 		
 	}
-	
+
 	getScoreOf( target ) {
 		let hand = target === 'player' ? this.state.playerHand : this.state.dealerHand;
 		// establish value of each card based on card.value
@@ -120,14 +133,55 @@ class App extends Component {
 		let result = ( handContainsAnAce() && ( score() > 21 ) ) ? score() - 10 : score();
 			
 		if( target === 'player' ) {
-			this.setState({
-				playerScore: result
+			this.setState( ( prevState ) => {
+				return {
+					playerScore: prevState.playerScore + result
+				}
 			})
 		} else if ( target === 'dealer' ) {
 			this.setState({
 				dealerScore: result
 			})
 		}
+	}
+
+	playerBusts() {
+		return this.state.playerScore > 21;
+	}
+
+	startDealersTurn() {
+		this.setState({
+			isDealersTurn: true
+		});
+		if( this.state.dealerScore <= 16 ) {
+			this.dealCards( 1, 'dealer' );
+			console.log( "After dealer draws card, dealer's score is: " + this.state.dealerScore )
+		} else if( this.state.dealerScore > 16 ) {
+			this.setWinner();
+		}
+	};
+
+	evaluateWinner() {
+		if( this.state.playerScore > 21 ) {
+			return 'Dealer';
+		} else if( this.state.dealerScore > 21 && this.state.playerScore <= 21 ) {
+			return 'Player';
+		} else if( this.state.playerScore < 21 && 
+			( this.state.dealerScore > this.state.playerScore && this.state.dealerScore <= 21 ) ) {
+				return 'Dealer';
+		} else if ( this.state.playerScore > this.state.dealerScore && this.state.playerScore <= 21 ) {
+			return 'Player';
+		} else if( this.state.playerScore === this.state.dealerScore ) {
+			return "none";
+		}
+	}
+
+	setWinner() {
+		let winner = this.evaluateWinner();
+		this.setState({
+			winner: this.state.winner + winner,
+		})
+		console.log( this.state.winner );
 	}
 	
 	render() {
@@ -145,6 +199,7 @@ class App extends Component {
 							type={ 'dealer' }
 							hand={ this.state.dealerHand }
 							score={ this.state.dealerScore }
+							isDealersTurn={ this.state.isDealersTurn }
 						/>
 						<Player
 							type={ 'player' }
@@ -156,6 +211,10 @@ class App extends Component {
 							playerScore={ playerScore }
 							startGame={ this.startGame }
 							hit={ this.dealCards }
+							isDealersTurn={ this.state.isDealersTurn }
+							startDealersTurn={ this.startDealersTurn }
+							winner={ this.state.winner }
+							busted={ this.playerBusts }
 						/>
 					</div>
 				)
