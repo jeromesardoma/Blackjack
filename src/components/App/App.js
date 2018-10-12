@@ -20,19 +20,16 @@ class App extends Component {
 		
 		this.startGame = this.startGame.bind( this );
 		this.initializeHands = this.initializeHands.bind( this );
-<<<<<<< HEAD
 		this.dealCards = this.dealCards.bind( this );
 		this.getHandOf = this.getHandOf.bind( this );
 		this.getValueOf = this.getValueOf.bind( this );
 		this.getScoreOf = this.getScoreOf.bind( this );
-=======
-		// this.dealCards = this.dealCards.bind( this );
-		this.dealCardTo = this.dealCardTo.bind( this );
+		this.dealCards = this.dealCards.bind( this );
+		// this.dealCardTo = this.dealCardTo.bind( this );
 		this.saveHandStateOf = this.saveHandStateOf.bind( this );
-		// this.getHandOf = this.getHandOf.bind( this );
-		// this.getScoreOf = this.getScoreOf.bind( this );
+		this.getHandOf = this.getHandOf.bind( this );
+		this.getScoreOf = this.getScoreOf.bind( this );
 		this.getValueOf = this.getValueOf.bind( this );
->>>>>>> origin/redo-draw-card
 		this.playerBusts = this.playerBusts.bind( this );
 		this.startDealersTurn = this.startDealersTurn.bind( this );
 		this.evaluateWinner = this.evaluateWinner.bind( this );
@@ -48,25 +45,26 @@ class App extends Component {
 			.then( response => response.json() )
 			.then( data => {
 				this.setState({ deckId: data.deck_id });
-				this.initializeHands();
 			})
+		// this.initializeHands();
 	}
 
 	componentDidUpdate() {
 		console.log( this.state.playerHand );
 		console.log( this.state.playerScore );
 		
-/* 		if( this.state.isDealersTurn === true ) {
+ 		if( this.state.isDealersTurn === true ) {
 			if( this.state.dealerScore <= 16 ) {
 				this.dealCards( 1, 'dealer' );
-			} else if( this.state.dealerScore > 16 ) {
+			} 
+/* 			else if( this.state.dealerScore > 16 ) {
 				// necessary to stop dealer from drawing cards
 				this.setState( prevState => {
 					return { isDealersTurn: !prevState.isDealersTurn }
 				});
 				this.setWinner();
-			}
-		} */
+			} */
+		}
 	}
 	
 	// custom functions
@@ -75,13 +73,12 @@ class App extends Component {
 		this.setState({
 			begun: true
 		});
+		this.initializeHands();
 	}
 	
 	initializeHands () {
-		this.dealCardTo( 'player' );
-		// this.dealCardTo( 'dealer' );
-		// this.dealCardTo( 'player' );
-		// this.dealCardTo( 'dealer' );
+		this.dealCards( 2, 'player' );
+		this.dealCards( 2, 'dealer' );
 	};
 	
 	// remove
@@ -95,7 +92,7 @@ class App extends Component {
 				let urlToAddCardsToHand = 'https://deckofcardsapi.com/api/deck/' + this.state.deckId + '/pile/' + target + 'Hand/add/?cards=' + data.cards.map( card => card.code ).join(',');
 				fetch( urlToAddCardsToHand )
 					.then( response => response.json() )
-					.then( data => this.getHandOf( target ) )
+					.then( data => this.saveHandStateOf( target ) )
 					}).catch( error => console.log( 'Cards not dealt.' ) );
 	}
 
@@ -121,20 +118,15 @@ class App extends Component {
 			.then( response => response.json() )
 			.then( data => {
 				if( target === 'player' ) {
-					this.setState( prevState => {
-						return {
-							// get the last object of cards and put in an array
-							playerHand: prevState.playerHand.concat( data.piles.playerHand.cards ),
-							playerScore: prevState.playerScore + this.getValueOf( data.piles.playerHand.cards[-1] )
-							}
-						})
-				} else if ( target === 'dealer' ) {
-					this.setState( prevState => {
-						return {
-							dealerHand: prevState.dealerHand.concat( data.piles.dealerHand.cards[0] ),
-							dealerScore: prevState.dealerScore + this.getValueOf( data.piles.dealerHand.cards[-1] )
-						}
+					this.setState({
+						playerHand: data.piles.playerHand.cards
 					})
+					this.getScoreOf( target )
+				} else if ( target === 'dealer' ) {
+					this.setState({
+						dealerHand: data.piles.dealerHand.cards
+					})
+					this.getScoreOf( target );
 				}
 				console.log( 'after save state, player hand is: ' + this.state.playerHand )
 		}).catch( error => 'Hand not retrieved.' )
@@ -180,32 +172,20 @@ class App extends Component {
 		let result = ( handContainsAnAce() && ( score() > 21 ) ) ? score() - 10 : score();
 
 		if( target === 'player' ) {
-			this.setState( prevState => {
-				return { 
-					playerScore: prevState.playerScore + (result - prevState.playerScore )
-				 }
+			this.setState({
+				playerScore: result
 			})
 		} else if ( target === 'dealer' ) {
-<<<<<<< HEAD
 			this.setState( ( prevState ) => {
 				return {
-					dealerScore: prevState.dealerScore + result
-=======
-			this.setState( prevState => {
-				return {
-					dealerScore: prevState.dealerScore + (result - prevState.dealerScore )
->>>>>>> origin/redo-draw-card
+					dealerScore: result
 				}
 			})
 		}
 	}
 
-<<<<<<< HEAD
-	getValueOf( card ) {
-=======
 	// new function
 	getValueOf( card = { value: null } ) {
->>>>>>> origin/redo-draw-card
 		switch( card.value ) {
 			case 'ACE':
 				return 11;
@@ -227,19 +207,8 @@ class App extends Component {
 				return Number( card.value );
 				break;
 		}
-<<<<<<< HEAD
 	}
-
-	recalculateScoreOf( target ) {
-		// get the value of the last card drawn
-		// add the value of the last card drawn to the target's hand
-		
-	}
-=======
-	}	
 	
->>>>>>> origin/redo-draw-card
-
 	playerBusts() {
 		return this.state.playerScore > 21;
 	}
@@ -304,7 +273,7 @@ class App extends Component {
 							dealerScore={ dealerScore }
 							playerScore={ playerScore }
 							startGame={ this.startGame }
-							hit={ this.dealCardTo }
+							hit={ this.dealCards }
 							isDealersTurn={ this.state.isDealersTurn }
 							startDealersTurn={ this.startDealersTurn }
 							winner={ this.state.winner }

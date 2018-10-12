@@ -11,14 +11,13 @@ class Player extends Component {
 		console.log( this.props.type + "'s hand: " + this.props.hand.map( card => card.code ).join(', ') );
 	}
 
-	shouldComponentUpdate( nextProps ) {
-		return nextProps.hand !== this.props.hand;
-	}
-
 	render () {
 		const cards = this.props.hand.map( (card, index ) => 
 			<img 
-				src={ ( index === 0 && this.props.type === 'dealer' && this.props.isDealersTurn === false ) ? 'facedowncardv2.png' : card.image } 
+				src={ ( ( index === 0 
+							&& this.props.type === 'dealer' 
+							&& this.props.isDealersTurn === false )
+							|| this.props.gameOver === false ) ? 'facedowncardv2.png' : card.image } 
 				alt={ card.code } 
 				key={ card.code }
 				style={{ "height": 150 }}></img>
