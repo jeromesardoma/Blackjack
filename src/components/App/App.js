@@ -50,20 +50,14 @@ class App extends Component {
 	}
 
 	componentDidUpdate() {
-		console.log( this.state.playerHand );
-		console.log( this.state.playerScore );
-		
- 		if( this.state.isDealersTurn === true ) {
+		if( this.state.isDealersTurn === true ) {
 			if( this.state.dealerScore <= 16 ) {
-				this.dealCards( 1, 'dealer' );
-			} 
-/* 			else if( this.state.dealerScore > 16 ) {
-				// necessary to stop dealer from drawing cards
-				this.setState( prevState => {
-					return { isDealersTurn: !prevState.isDealersTurn }
-				});
-				this.setWinner();
-			} */
+				this.dealCards( 1, 'dealer' )
+			}	
+			this.setState( prevState => {
+				return { isDealersTurn: !prevState.isDealersTurn }
+			});
+			this.setWinner();	
 		}
 	}
 	
@@ -128,7 +122,6 @@ class App extends Component {
 					})
 					this.getScoreOf( target );
 				}
-				console.log( 'after save state, player hand is: ' + this.state.playerHand )
 		}).catch( error => 'Hand not retrieved.' )
 	}
 
@@ -214,9 +207,21 @@ class App extends Component {
 	}
 
 	startDealersTurn() {
-		this.setState({
-			isDealersTurn: true
+		this.setState( prevState => {
+			return {
+				isDealersTurn: !prevState.isDealersTurn
+			}
 		});
+/* 		if( this.state.dealerScore <= 16 ) {
+			this.dealCards( 1, 'dealer' );
+		} 
+		 else if( this.state.dealerScore > 16 ) {
+			// necessary to stop dealer from drawing cards
+			this.setState( prevState => {
+				return { isDealersTurn: !prevState.isDealersTurn }
+			});
+			this.setWinner();
+		} */
 	};
 
 	evaluateWinner() {
@@ -262,7 +267,7 @@ class App extends Component {
 							hand={ this.state.dealerHand }
 							score={ this.state.dealerScore }
 							isDealersTurn={ this.state.isDealersTurn }
-							gameOver={ this.gameOver }
+							gameOver={ this.gameOver() }
 						/>
 						<Player
 							type={ 'player' }
