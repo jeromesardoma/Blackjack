@@ -22,6 +22,7 @@ class App extends Component {
 		this.initializeHands = this.initializeHands.bind( this );
 		this.dealCards = this.dealCards.bind( this );
 		this.getHandOf = this.getHandOf.bind( this );
+		this.getValueOf = this.getValueOf.bind( this );
 		this.getScoreOf = this.getScoreOf.bind( this );
 		this.playerBusts = this.playerBusts.bind( this );
 		this.startDealersTurn = this.startDealersTurn.bind( this );
@@ -105,33 +106,11 @@ class App extends Component {
 		}
 
 		let score = () => {
-			return hand.map( card => {
-				switch( card.value ) {
-					case 'ACE':
-						return 11;
-						// if target has an ace, and score is greater than 21, subtract 10 from score
-						break;
-					case 0:
-						return 10;
-						break;
-					case 'JACK':
-						return 10;
-						break;
-					case 'QUEEN':
-						return 10;
-						break;
-					case 'KING':
-						return 10;
-						break;
-					default:
-						return Number( card.value );
-						break;
-				}
-			} ).reduce( (a, c) => a + c, 0 ); 
+			return hand.map( card => this.getValueOf( card ) ).reduce( (a, c) => a + c, 0 ); 
 		}
 
 		let result = ( handContainsAnAce() && ( score() > 21 ) ) ? score() - 10 : score();
-			
+
 		if( target === 'player' ) {
 			this.setState( ( prevState ) => {
 				return {
@@ -139,10 +118,42 @@ class App extends Component {
 				}
 			})
 		} else if ( target === 'dealer' ) {
-			this.setState({
-				dealerScore: result
+			this.setState( ( prevState ) => {
+				return {
+					dealerScore: prevState.dealerScore + result
+				}
 			})
 		}
+	}
+
+	getValueOf( card ) {
+		switch( card.value ) {
+			case 'ACE':
+				return 11;
+				// if target has an ace, and score is greater than 21, subtract 10 from score
+				break;
+			case 0:
+				return 10;
+				break;
+			case 'JACK':
+				return 10;
+				break;
+			case 'QUEEN':
+				return 10;
+				break;
+			case 'KING':
+				return 10;
+				break;
+			default:
+				return Number( card.value );
+				break;
+		}
+	}
+
+	recalculateScoreOf( target ) {
+		// get the value of the last card drawn
+		// add the value of the last card drawn to the target's hand
+		
 	}
 
 	playerBusts() {
