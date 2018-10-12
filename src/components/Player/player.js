@@ -10,7 +10,11 @@ class Player extends Component {
 	componentDidMount() {
 		console.log( this.props.type + "'s hand: " + this.props.hand.map( card => card.code ).join(', ') );
 	}
-	
+
+	shouldComponentUpdate( nextProps ) {
+		return nextProps.hand !== this.props.hand;
+	}
+
 	render () {
 		const cards = this.props.hand.map( (card, index ) => 
 			<img 
