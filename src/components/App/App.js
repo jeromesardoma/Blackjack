@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import Player from '../Player/player';
 import ActionBar from '../ActionBar/actionbar';
+import ReactDOM from 'react-dom';
 
 class App extends Component {
 	constructor( props ) {
@@ -18,6 +19,7 @@ class App extends Component {
 			winner: ''
 		}
 		
+		this.getDeck = this.getDeck.bind( this );
 		this.startGame = this.startGame.bind( this );
 		this.initializeHands = this.initializeHands.bind( this );
 		this.dealCards = this.dealCards.bind( this );
@@ -30,23 +32,20 @@ class App extends Component {
 		this.evaluateWinner = this.evaluateWinner.bind( this );
 		this.setWinner = this.setWinner.bind( this );
 		this.gameOver = this.gameOver.bind( this );
+		this.startNewGame = this.startNewGame.bind( this );
 	}
 	
 	// lifecycle functions
 	
 	componentDidMount() {
 		// load deck
-		fetch( 'https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1' )
-			.then( response => response.json() )
-			.then( data => {
-				this.setState({ deckId: data.deck_id });
-			})
+		this.getDeck();
 		// this.initializeHands();
 	}
 
 	componentDidUpdate() {
 		if( this.state.isDealersTurn === true ) {
-			if( this.state.dealerScore <= 16 ) {
+			if( this.state.dealerScore <= 17 ) {
 				this.dealCards( 1, 'dealer' )
 			}	
 			this.setState( prevState => {
@@ -57,6 +56,14 @@ class App extends Component {
 	}
 	
 	// custom functions
+
+	getDeck() {
+		fetch( 'https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1' )
+		.then( response => response.json() )
+		.then( data => {
+			this.setState({ deckId: data.deck_id });
+		})
+	}
 	
 	startGame() {
 		this.setState({
@@ -66,10 +73,8 @@ class App extends Component {
 	}
 	
 	initializeHands () {
-		this.dealCardTo( 'player' );
-		// this.dealCardTo( 'dealer' );
-		// this.dealCardTo( 'player' );
-		// this.dealCardTo( 'dealer' );
+		this.dealCards( 2, 'player' );
+		this.dealCards( 2, 'dealer' );
 	};
 	
 	dealCards( numberOfCards, target ) {
@@ -124,10 +129,8 @@ class App extends Component {
 				playerScore: result
 			})
 		} else if ( target === 'dealer' ) {
-			this.setState( ( prevState ) => {
-				return {
-					dealerScore: result
-				}
+			this.setState({
+				dealerScore: result
 			})
 		}
 	}
@@ -195,6 +198,11 @@ class App extends Component {
 	gameOver() {
 		return this.state.winner !== '' || this.playerBusts() === true;
 	}
+
+	startNewGame() {
+		ReactDOM.unmountComponentAtNode( document.getElementById( "root" ) );
+		ReactDOM.render( <App />, document.getElementById( "root" ) );
+	}
 	
 	render() {
 		const playerScore = this.state.playerScore;
@@ -220,14 +228,13 @@ class App extends Component {
 							score={ playerScore }
 						/>
 						<ActionBar
-							dealerScore={ dealerScore }
-							playerScore={ playerScore }
 							startGame={ this.startGame }
-							hit={ this.dealCardTo }
+							hit={ this.dealCards }
 							isDealersTurn={ this.state.isDealersTurn }
 							startDealersTurn={ this.startDealersTurn }
 							winner={ this.state.winner }
 							busted={ this.playerBusts }
+							startNewGame={ this.startNewGame }
 						/>
 					</div>
 				)
