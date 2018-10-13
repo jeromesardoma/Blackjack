@@ -21,15 +21,10 @@ class App extends Component {
 		this.startGame = this.startGame.bind( this );
 		this.initializeHands = this.initializeHands.bind( this );
 		this.dealCards = this.dealCards.bind( this );
-		this.getHandOf = this.getHandOf.bind( this );
 		this.getValueOf = this.getValueOf.bind( this );
 		this.getScoreOf = this.getScoreOf.bind( this );
 		this.dealCards = this.dealCards.bind( this );
-		// this.dealCardTo = this.dealCardTo.bind( this );
 		this.saveHandStateOf = this.saveHandStateOf.bind( this );
-		this.getHandOf = this.getHandOf.bind( this );
-		this.getScoreOf = this.getScoreOf.bind( this );
-		this.getValueOf = this.getValueOf.bind( this );
 		this.playerBusts = this.playerBusts.bind( this );
 		this.startDealersTurn = this.startDealersTurn.bind( this );
 		this.evaluateWinner = this.evaluateWinner.bind( this );
@@ -77,7 +72,6 @@ class App extends Component {
 		// this.dealCardTo( 'dealer' );
 	};
 	
-	// remove
 	dealCards( numberOfCards, target ) {
 		// first draw cards
 		const urlToGetCards = 'https://deckofcardsapi.com/api/deck/' + this.state.deckId + '/draw/?count=' + numberOfCards;
@@ -90,22 +84,6 @@ class App extends Component {
 					.then( response => response.json() )
 					.then( data => this.saveHandStateOf( target ) )
 					}).catch( error => console.log( 'Cards not dealt.' ) );
-	}
-
-	// new function 
-	dealCardTo( target ) {
-		// first draw card
-		console.log( 'One card dealt to ' + target );
-		const urlToGetCard = 'https://deckofcardsapi.com/api/deck/' + this.state.deckId + '/draw/?count=1'
-		fetch( urlToGetCard )
-			.then( response => response.json() )
-			.then( data => {
-				// then deal card
-				let urlToAddCardToHand = 'https://deckofcardsapi.com/api/deck/' + this.state.deckId + '/pile/' + target + 'Hand/add/?cards=' + data.cards[0].code;
-				fetch( urlToAddCardToHand )
-					.then( response => response.json() )
-					.then( data => this.saveHandStateOf( target ) )
-					}).catch( error => console.log( 'Card not dealt.' ) );
 	}
 
 	// new function
@@ -127,31 +105,6 @@ class App extends Component {
 		}).catch( error => 'Hand not retrieved.' )
 	}
 
-	// remove
-	getHandOf( target ) {
-		fetch( 'https://deckofcardsapi.com/api/deck/' + this.state.deckId + '/pile/' + target + 'Hand/list' )
-			.then( response => response.json() )
-			.then( data => {
-				if( target === 'player' ) {
-					this.setState( ( prevState ) => {
-						return {
-							playerHand: prevState.playerHand.concat( data.piles.playerHand.cards )
-								.slice( prevState.playerHand.length )
-							}
-					})
-				} else if ( target === 'dealer' ) {
-					this.setState( ( prevState ) => {
-						return {
-							dealerHand: prevState.dealerHand.concat( data.piles.dealerHand.cards )
-								.slice( prevState.dealerHand.length )
-							}
-					})
-				}
-				this.getScoreOf( target );
-			}).catch( error => 'Hand not retrieved.' )
-	}
-
-	// remove
 	getScoreOf( target ) {
 		let hand = target === 'player' ? this.state.playerHand : this.state.dealerHand;
 		// establish value of each card based on card.value
@@ -214,16 +167,6 @@ class App extends Component {
 				isDealersTurn: !prevState.isDealersTurn
 			}
 		});
-/* 		if( this.state.dealerScore <= 16 ) {
-			this.dealCards( 1, 'dealer' );
-		} 
-		 else if( this.state.dealerScore > 16 ) {
-			// necessary to stop dealer from drawing cards
-			this.setState( prevState => {
-				return { isDealersTurn: !prevState.isDealersTurn }
-			});
-			this.setWinner();
-		} */
 	};
 
 	evaluateWinner() {
