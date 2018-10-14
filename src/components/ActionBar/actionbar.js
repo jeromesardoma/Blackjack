@@ -7,29 +7,27 @@ class ActionBar extends Component {
 	}
 	
 	render () {
-		const playerScore = this.props.playerScore;
-		const dealerScore = this.props.dealerScore;
 		const winner = this.props.winner;
 		const renderActionBar = () => {
 			if( winner === 'Dealer' || this.props.busted() === true ) {
 				return(
 					<div>
 						<p>You Lose. Play Again?</p>
-						<button onClick={ this.props.startGame }>New Game</button>
+						<button onClick={ () => { this.props.startNewGame() } }>New Game</button>
 					</div>
 				)
 			} else if( winner === 'Player' ) {
 				return(
 					<div>
 						<p>You Win! Play Again?</p>
-						<button onClick={ this.props.startGame }>New Game</button>
+						<button onClick={ () => { this.props.startNewGame() } }>New Game</button>
 					</div>
 				)	
 			} else if( winner === 'none' ) {
 				return(
 					<div>
 						<p>Tie game. Play Again?</p>
-						<button onClick={ this.props.startGame }>New Game</button>
+						<button onClick={ () => { this.props.startNewGame() } }>New Game</button>
 					</div>
 				)	
 			} else if( this.props.isDealersTurn === false ) {

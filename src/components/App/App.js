@@ -40,18 +40,20 @@ class App extends Component {
 	componentDidMount() {
 		// load deck
 		this.getDeck();
-		// this.initializeHands();
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate( prevState ) {
 		if( this.state.isDealersTurn === true ) {
-			if( this.state.dealerScore <= 17 ) {
-				this.dealCards( 1, 'dealer' )
+			if( this.state.dealerScore < 17 ) {
+				this.dealCards( 1, 'dealer' );
+			} else if( this.state.dealerScore >= 17 ) {
+				this.setState( prevState => {
+					return {
+						isDealersTurn: !prevState.isDealersTurn
+					}
+				})
+				this.setWinner();
 			}	
-			this.setState( prevState => {
-				return { isDealersTurn: !prevState.isDealersTurn }
-			});
-			this.setWinner();	
 		}
 	}
 	
@@ -91,51 +93,39 @@ class App extends Component {
 					}).catch( error => console.log( 'Cards not dealt.' ) );
 	}
 
-	// new function
 	saveHandStateOf( target ) {
 		fetch( 'https://deckofcardsapi.com/api/deck/' + this.state.deckId + '/pile/' + target + 'Hand/list' )
 			.then( response => response.json() )
 			.then( data => {
 				if( target === 'player' ) {
-					this.setState({
-						playerHand: data.piles.playerHand.cards
+					this.setState( prevState => {
+						return {
+							playerHand: data.piles.playerHand.cards,
+							playerScore: this.getScoreOf( data.piles.playerHand.cards )
+						}
 					})
-					this.getScoreOf( target )
 				} else if ( target === 'dealer' ) {
-					this.setState({
-						dealerHand: data.piles.dealerHand.cards
+					this.setState( prevState => {
+						return {
+							dealerHand: data.piles.dealerHand.cards,
+							dealerScore: this.getScoreOf( data.piles.dealerHand.cards )
+						}
 					})
-					this.getScoreOf( target );
 				}
 		}).catch( error => 'Hand not retrieved.' )
 	}
 
-	getScoreOf( target ) {
-		let hand = target === 'player' ? this.state.playerHand : this.state.dealerHand;
-		// establish value of each card based on card.value
-		
+	getScoreOf( hand ) {
 		const handContainsAnAce = () => {
 			return hand.some( card => card.value === 'ACE' );
 		}
-
 		let score = () => {
 			return hand.map( card => this.getValueOf( card ) ).reduce( (a, c) => a + c, 0 ); 
 		}
-
 		let result = ( handContainsAnAce() && ( score() > 21 ) ) ? score() - 10 : score();
-
-		if( target === 'player' ) {
-			this.setState({
-				playerScore: result
-			})
-		} else if ( target === 'dealer' ) {
-			this.setState({
-				dealerScore: result
-			})
-		}
+		return result;
 	}
 
-	// new function
 	getValueOf( card = { value: null } ) {
 		switch( card.value ) {
 			case 'ACE':
