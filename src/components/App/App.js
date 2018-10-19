@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './App.css';
 import Player from '../Player/player';
 import ActionBar from '../ActionBar/actionbar';
+import ReactDOM from 'react-dom';
+import { newDeckRequest } from './APICalls'
 
 class App extends Component {
 	constructor( props ) {
@@ -18,6 +20,7 @@ class App extends Component {
 			winner: ''
 		}
 		
+		// this.getDeck = this.getDeck.bind( this );
 		this.startGame = this.startGame.bind( this );
 		this.initializeHands = this.initializeHands.bind( this );
 		this.dealCards = this.dealCards.bind( this );
@@ -30,33 +33,40 @@ class App extends Component {
 		this.evaluateWinner = this.evaluateWinner.bind( this );
 		this.setWinner = this.setWinner.bind( this );
 		this.gameOver = this.gameOver.bind( this );
+		this.startNewGame = this.startNewGame.bind( this );
 	}
 	
 	// lifecycle functions
 	
 	componentDidMount() {
-		// load deck
-		fetch( 'https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1' )
-			.then( response => response.json() )
-			.then( data => {
-				this.setState({ deckId: data.deck_id });
-			})
-		// this.initializeHands();
+
+		newDeckRequest(); 
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate( prevState ) {
 		if( this.state.isDealersTurn === true ) {
-			if( this.state.dealerScore <= 16 ) {
-				this.dealCards( 1, 'dealer' )
+			if( this.state.dealerScore < 17 ) {
+				this.dealCards( 1, 'dealer' );
+			} else if( this.state.dealerScore >= 17 ) {
+				this.setState( prevState => {
+					return {
+						isDealersTurn: !prevState.isDealersTurn
+					}
+				})
+				this.setWinner();
 			}	
-			this.setState( prevState => {
-				return { isDealersTurn: !prevState.isDealersTurn }
-			});
-			this.setWinner();	
 		}
 	}
 	
 	// custom functions
+
+/* 	getDeck() {
+		fetch( 'https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1' )
+		.then( response => response.json() )
+		.then( data => {
+			this.setState({ deckId: data.deck_id });
+		})
+	} */
 	
 	startGame() {
 		this.setState({
@@ -84,53 +94,39 @@ class App extends Component {
 					}).catch( error => console.log( 'Cards not dealt.' ) );
 	}
 
-	// new function
 	saveHandStateOf( target ) {
 		fetch( 'https://deckofcardsapi.com/api/deck/' + this.state.deckId + '/pile/' + target + 'Hand/list' )
 			.then( response => response.json() )
 			.then( data => {
 				if( target === 'player' ) {
-					this.setState({
-						playerHand: data.piles.playerHand.cards
+					this.setState( prevState => {
+						return {
+							playerHand: data.piles.playerHand.cards,
+							playerScore: this.getScoreOf( data.piles.playerHand.cards )
+						}
 					})
-					this.getScoreOf( target )
 				} else if ( target === 'dealer' ) {
-					this.setState({
-						dealerHand: data.piles.dealerHand.cards
+					this.setState( prevState => {
+						return {
+							dealerHand: data.piles.dealerHand.cards,
+							dealerScore: this.getScoreOf( data.piles.dealerHand.cards )
+						}
 					})
-					this.getScoreOf( target );
 				}
 		}).catch( error => 'Hand not retrieved.' )
 	}
 
-	getScoreOf( target ) {
-		let hand = target === 'player' ? this.state.playerHand : this.state.dealerHand;
-		// establish value of each card based on card.value
-		
+	getScoreOf( hand ) {
 		const handContainsAnAce = () => {
 			return hand.some( card => card.value === 'ACE' );
 		}
-
 		let score = () => {
 			return hand.map( card => this.getValueOf( card ) ).reduce( (a, c) => a + c, 0 ); 
 		}
-
 		let result = ( handContainsAnAce() && ( score() > 21 ) ) ? score() - 10 : score();
-
-		if( target === 'player' ) {
-			this.setState({
-				playerScore: result
-			})
-		} else if ( target === 'dealer' ) {
-			this.setState( ( prevState ) => {
-				return {
-					dealerScore: result
-				}
-			})
-		}
+		return result;
 	}
 
-	// new function
 	getValueOf( card = { value: null } ) {
 		switch( card.value ) {
 			case 'ACE':
@@ -193,6 +189,11 @@ class App extends Component {
 	gameOver() {
 		return this.state.winner !== '' || this.playerBusts() === true;
 	}
+
+	startNewGame() {
+		ReactDOM.unmountComponentAtNode( document.getElementById( "root" ) );
+		ReactDOM.render( <App />, document.getElementById( "root" ) );
+	}
 	
 	render() {
 		const playerScore = this.state.playerScore;
@@ -218,14 +219,13 @@ class App extends Component {
 							score={ playerScore }
 						/>
 						<ActionBar
-							dealerScore={ dealerScore }
-							playerScore={ playerScore }
 							startGame={ this.startGame }
 							hit={ this.dealCards }
 							isDealersTurn={ this.state.isDealersTurn }
 							startDealersTurn={ this.startDealersTurn }
 							winner={ this.state.winner }
 							busted={ this.playerBusts }
+							startNewGame={ this.startNewGame }
 						/>
 					</div>
 				)

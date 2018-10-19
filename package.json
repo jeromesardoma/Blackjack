@@ -1,7 +1,6 @@
 {
   "name": "blackjack",
   "jest": {
-    "verbose": true,
     "setupTestFrameworkScriptFile": "<rootDir>src/setupTests.js",
     "moduleNameMapper": {
       ".(css|less)$": "<rootDir>src/__mocks__/styleMock.js"
