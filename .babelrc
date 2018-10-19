@@ -1,7 +1,3 @@
 {
-<<<<<<< HEAD
-  "presets": ["es2015", "react"]
-=======
     "presets": [ "env", "react" ] 
->>>>>>> origin/adding-tests
 }

@@ -3,10 +3,7 @@ import './App.css';
 import Player from '../Player/player';
 import ActionBar from '../ActionBar/actionbar';
 import ReactDOM from 'react-dom';
-<<<<<<< HEAD
-=======
 import { newDeckRequest } from './APICalls'
->>>>>>> origin/adding-tests
 
 class App extends Component {
 	constructor( props ) {
@@ -23,11 +20,8 @@ class App extends Component {
 			winner: ''
 		}
 		
-<<<<<<< HEAD
-		this.getDeck = this.getDeck.bind( this );
-=======
 		// this.getDeck = this.getDeck.bind( this );
->>>>>>> origin/adding-tests
+		this.newDeckRequest = newDeckRequest.bind( this );
 		this.startGame = this.startGame.bind( this );
 		this.initializeHands = this.initializeHands.bind( this );
 		this.dealCards = this.dealCards.bind( this );
@@ -46,13 +40,8 @@ class App extends Component {
 	// lifecycle functions
 	
 	componentDidMount() {
-<<<<<<< HEAD
-		// load deck
-		this.getDeck();
-=======
-
-		newDeckRequest(); 
->>>>>>> origin/adding-tests
+		
+		this.newDeckRequest();
 	}
 
 	componentDidUpdate( prevState ) {
@@ -72,21 +61,13 @@ class App extends Component {
 	
 	// custom functions
 
-<<<<<<< HEAD
-	getDeck() {
-=======
 /* 	getDeck() {
->>>>>>> origin/adding-tests
 		fetch( 'https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1' )
 		.then( response => response.json() )
 		.then( data => {
 			this.setState({ deckId: data.deck_id });
 		})
-<<<<<<< HEAD
-	}
-=======
 	} */
->>>>>>> origin/adding-tests
 	
 	startGame() {
 		this.setState({
