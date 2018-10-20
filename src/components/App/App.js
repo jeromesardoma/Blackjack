@@ -20,7 +20,6 @@ class App extends Component {
 			winner: ''
 		}
 		
-		// this.getDeck = this.getDeck.bind( this );
 		this.newDeckRequest = newDeckRequest.bind( this );
 		this.startGame = this.startGame.bind( this );
 		this.initializeHands = this.initializeHands.bind( this );
@@ -41,7 +40,7 @@ class App extends Component {
 	
 	componentDidMount() {
 		
-		this.newDeckRequest();
+		newDeckRequest();
 	}
 
 	componentDidUpdate( prevState ) {
@@ -60,14 +59,6 @@ class App extends Component {
 	}
 	
 	// custom functions
-
-/* 	getDeck() {
-		fetch( 'https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1' )
-		.then( response => response.json() )
-		.then( data => {
-			this.setState({ deckId: data.deck_id });
-		})
-	} */
 	
 	startGame() {
 		this.setState({
