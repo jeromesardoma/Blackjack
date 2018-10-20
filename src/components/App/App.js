@@ -3,7 +3,7 @@ import './App.css';
 import Player from '../Player/player';
 import ActionBar from '../ActionBar/actionbar';
 import ReactDOM from 'react-dom';
-import { newDeckRequest } from './APICalls'
+import { newDeckRequest } from './newDeckRequest'
 
 class App extends Component {
 	constructor( props ) {
