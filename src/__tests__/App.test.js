@@ -1,14 +1,21 @@
 import React from 'react';
 import App from '../components/App/App';
+import Player from '../components/Player/player';
 import { newDeckRequest } from '../components/App/newDeckRequest';
-import { mount } from 'enzyme';
+import { dealCardsRequest } from '../components/App/dealCardsRequest';
+import { shallow, mount } from 'enzyme';
 
 jest.mock( '../components/App/newDeckRequest' );
+jest.mock( '../components/App/dealCardsRequest' );
+
+// unit tests for now! 
 
 describe( 'App', () => {
-    it( 'loads a new deck successfully', () => {
-        mount( <App /> );
-        expect( newDeckRequest ).toHaveBeenCalledTimes(1); 
-    })
+
+    it( 'at launch, renders two Player components when "New Game" is clicked', () => {
+        const wrapper = mount( <App /> );
+        wrapper.find( "button" ).simulate( "click" );
+        expect( wrapper.find( Player ).length ).toEqual(2);
+    });
 
 })

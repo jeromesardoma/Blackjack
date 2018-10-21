@@ -3,7 +3,8 @@ import './App.css';
 import Player from '../Player/player';
 import ActionBar from '../ActionBar/actionbar';
 import ReactDOM from 'react-dom';
-import { newDeckRequest } from './newDeckRequest'
+import { newDeckRequest } from './newDeckRequest';
+import { dealCardsRequest } from './dealCardsRequest';
 
 class App extends Component {
 	constructor( props ) {
@@ -19,14 +20,17 @@ class App extends Component {
 			isDealersTurn: false,
 			winner: ''
 		}
-		
-		this.newDeckRequest = newDeckRequest.bind( this );
+        
+        // binds for imported functions
+        this.newDeckRequest = newDeckRequest.bind( this );
+        this.dealCardsRequest = dealCardsRequest.bind( this );
+
+        // binds for functions in App scope
 		this.startGame = this.startGame.bind( this );
 		this.initializeHands = this.initializeHands.bind( this );
-		this.dealCards = this.dealCards.bind( this );
+		// this.dealCards = this.dealCards.bind( this );
 		this.getValueOf = this.getValueOf.bind( this );
 		this.getScoreOf = this.getScoreOf.bind( this );
-		this.dealCards = this.dealCards.bind( this );
 		this.saveHandStateOf = this.saveHandStateOf.bind( this );
 		this.playerBusts = this.playerBusts.bind( this );
 		this.startDealersTurn = this.startDealersTurn.bind( this );
@@ -40,7 +44,7 @@ class App extends Component {
 	
 	componentDidMount() {
 		
-		newDeckRequest();
+		this.newDeckRequest();
 	}
 
 	componentDidUpdate( prevState ) {
@@ -68,11 +72,11 @@ class App extends Component {
 	}
 	
 	initializeHands () {
-		this.dealCards( 2, 'player' );
-		this.dealCards( 2, 'dealer' );
+		this.dealCardsRequest( 2, 'player' );
+		this.dealCardsRequest( 2, 'dealer' );
 	};
 	
-	dealCards( numberOfCards, target ) {
+/* 	dealCards( numberOfCards, target ) {
 		// first draw cards
 		const urlToGetCards = 'https://deckofcardsapi.com/api/deck/' + this.state.deckId + '/draw/?count=' + numberOfCards;
 		fetch( urlToGetCards )
@@ -84,7 +88,7 @@ class App extends Component {
 					.then( response => response.json() )
 					.then( data => this.saveHandStateOf( target ) )
 					}).catch( error => console.log( 'Cards not dealt.' ) );
-	}
+	} */
 
 	saveHandStateOf( target ) {
 		fetch( 'https://deckofcardsapi.com/api/deck/' + this.state.deckId + '/pile/' + target + 'Hand/list' )
