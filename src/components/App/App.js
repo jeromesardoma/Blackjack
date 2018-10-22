@@ -50,7 +50,7 @@ class App extends Component {
 	componentDidUpdate( prevState ) {
 		if( this.state.isDealersTurn === true ) {
 			if( this.state.dealerScore < 17 ) {
-				this.dealCards( 1, 'dealer' );
+				this.dealCardsRequest( 1, 'dealer' );
 			} else if( this.state.dealerScore >= 17 ) {
 				this.setState( prevState => {
 					return {
@@ -216,7 +216,7 @@ class App extends Component {
 						/>
 						<ActionBar
 							startGame={ this.startGame }
-							hit={ this.dealCards }
+							hit={ this.dealCardsRequest }
 							isDealersTurn={ this.state.isDealersTurn }
 							startDealersTurn={ this.startDealersTurn }
 							winner={ this.state.winner }
