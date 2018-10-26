@@ -28,7 +28,6 @@ class App extends Component {
         // binds for functions in App scope
 		this.startGame = this.startGame.bind( this );
 		this.initializeHands = this.initializeHands.bind( this );
-		// this.dealCards = this.dealCards.bind( this );
 		this.getValueOf = this.getValueOf.bind( this );
 		this.getScoreOf = this.getScoreOf.bind( this );
 		this.saveHandStateOf = this.saveHandStateOf.bind( this );
@@ -38,8 +37,8 @@ class App extends Component {
 		this.setWinner = this.setWinner.bind( this );
 		this.gameOver = this.gameOver.bind( this );
 		this.startNewGame = this.startNewGame.bind( this );
-	}
-	
+    }
+    
 	// lifecycle functions
 	
 	componentDidMount() {
@@ -75,20 +74,6 @@ class App extends Component {
 		this.dealCardsRequest( 2, 'player' );
 		this.dealCardsRequest( 2, 'dealer' );
 	};
-	
-/* 	dealCards( numberOfCards, target ) {
-		// first draw cards
-		const urlToGetCards = 'https://deckofcardsapi.com/api/deck/' + this.state.deckId + '/draw/?count=' + numberOfCards;
-		fetch( urlToGetCards )
-			.then( response => response.json() )
-			.then( data => {
-				// then deal cards
-				let urlToAddCardsToHand = 'https://deckofcardsapi.com/api/deck/' + this.state.deckId + '/pile/' + target + 'Hand/add/?cards=' + data.cards.map( card => card.code ).join(',');
-				fetch( urlToAddCardsToHand )
-					.then( response => response.json() )
-					.then( data => this.saveHandStateOf( target ) )
-					}).catch( error => console.log( 'Cards not dealt.' ) );
-	} */
 
 	saveHandStateOf( target ) {
 		fetch( 'https://deckofcardsapi.com/api/deck/' + this.state.deckId + '/pile/' + target + 'Hand/list' )
@@ -192,10 +177,17 @@ class App extends Component {
 	}
 	
 	render() {
-		const playerScore = this.state.playerScore;
-		const dealerScore = this.state.dealerScore;
+        const {
+            begun,
+            dealerHand,
+            dealerScore,
+            isDealersTurn,
+            playerHand,
+            playerScore,
+            winner
+        } = this.state;
 		const renderGame = () => {
-			if( this.state.begun === false ) {
+			if( begun === false ) {
 				return(
 					<button onClick={ this.startGame }>New Game</button>
 				)
@@ -204,22 +196,22 @@ class App extends Component {
 					<div className="App">
 						<Player
 							type={ 'dealer' }
-							hand={ this.state.dealerHand }
-							score={ this.state.dealerScore }
-							isDealersTurn={ this.state.isDealersTurn }
+							hand={ dealerHand }
+							score={ dealerScore }
+							isDealersTurn={ isDealersTurn }
 							gameOver={ this.gameOver() }
 						/>
 						<Player
 							type={ 'player' }
-							hand={ this.state.playerHand }
+							hand={ playerHand }
 							score={ playerScore }
 						/>
 						<ActionBar
 							startGame={ this.startGame }
 							hit={ this.dealCardsRequest }
-							isDealersTurn={ this.state.isDealersTurn }
+							isDealersTurn={ isDealersTurn }
 							startDealersTurn={ this.startDealersTurn }
-							winner={ this.state.winner }
+							winner={ winner }
 							busted={ this.playerBusts }
 							startNewGame={ this.startNewGame }
 						/>

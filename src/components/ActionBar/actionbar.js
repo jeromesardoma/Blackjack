@@ -7,34 +7,41 @@ class ActionBar extends Component {
 	}
 	
 	render () {
-		const winner = this.props.winner;
+		const {
+            winner,
+            busted,
+            startNewGame,
+            isDealersTurn,
+            hit,
+            startDealersTurn
+        } = this.props;
 		const renderActionBar = () => {
-			if( winner === 'Dealer' || this.props.busted() === true ) {
+			if( winner === 'Dealer' || busted() === true ) {
 				return(
 					<div>
 						<p>You Lose. Play Again?</p>
-						<button onClick={ () => { this.props.startNewGame() } }>New Game</button>
+						<button onClick={ () => { startNewGame() } }>New Game</button>
 					</div>
 				)
 			} else if( winner === 'Player' ) {
 				return(
 					<div>
 						<p>You Win! Play Again?</p>
-						<button onClick={ () => { this.props.startNewGame() } }>New Game</button>
+						<button onClick={ () => { startNewGame() } }>New Game</button>
 					</div>
 				)	
 			} else if( winner === 'none' ) {
 				return(
 					<div>
 						<p>Tie game. Play Again?</p>
-						<button onClick={ () => { this.props.startNewGame() } }>New Game</button>
+						<button onClick={ () => { startNewGame() } }>New Game</button>
 					</div>
 				)	
-			} else if( this.props.isDealersTurn === false ) {
+			} else if( isDealersTurn === false ) {
 				return(
 					<div>
-						<button onClick={ () => { this.props.hit( 1, 'player' ) } }>Hit</button>
-						<button onClick={ () => { this.props.startDealersTurn() } } >Stay</button>
+						<button onClick={ () => { hit( 1, 'player' ) } }>Hit</button>
+						<button onClick={ () => { startDealersTurn() } } >Stay</button>
 					</div>
 				)
 			}

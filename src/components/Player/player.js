@@ -6,14 +6,16 @@ class Player extends Component {
 		super( props );
 		
 	}
-	
-	componentDidMount() {
-
-	}
 
 	render () {
-		const cards = this.props.hand.map( (card, index ) => {
-			if( this.props.gameOver === true && this.props.type === 'dealer' ) {
+        const {
+            hand,
+            gameOver,
+            type,
+            score
+        } = this.props;
+		const cards = hand.map( (card, index ) => {
+			if( gameOver === true && type === 'dealer' ) {
 				return(
 					<img
 						src={ card.image }
@@ -24,7 +26,7 @@ class Player extends Component {
 			} else {
 				return(
 					<img 
-						src={ ( index === 0 && this.props.type === 'dealer' ) ? 'facedowncardv2.png' : card.image } 
+						src={ ( index === 0 && type === 'dealer' ) ? 'facedowncardv2.png' : card.image } 
 						alt={ card.code } 
 						key={ card.code }
 						style={{ "height": 150 }}></img>	
@@ -33,8 +35,8 @@ class Player extends Component {
 		});			
 		return(
 			<div>
-				<h3>{ this.props.type.substr(0,1).toUpperCase() + this.props.type.substr(1) }</h3>
-				{ this.props.gameOver === false ? null : <h5>Score: { this.props.score }</h5> }
+				<h3>{ type.substr(0,1).toUpperCase() + type.substr(1) }</h3>
+				{ gameOver === false ? null : <h5>Score: { score }</h5> }
 				<section>
 					{ cards }
 				</section>

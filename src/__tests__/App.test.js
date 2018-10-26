@@ -22,7 +22,14 @@ describe( 'App', () => {
     })
 
     afterEach( () => {
+        // unmount after each test so it doesn't persist on subsequent tests
         wrapper.unmount();
+    })
+
+    it( 'retrieves a new deck successfully', () => {
+        // console.log( wrapper.state() );
+
+        expect( wrapper.state( 'deckId' ) ).not.toEqual('');
     })
 
     it( 'at launch, renders two Player components when "New Game" is clicked', () => {
