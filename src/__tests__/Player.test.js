@@ -34,7 +34,7 @@ describe( 'Player', () => {
         it( 'testPlayer exists', () => {
             let testPlayer = wrapper.find( '[type="player"]' );
             expect( testPlayer.props() ).not.toBeNull;
-            console.log( newDeckRequest() );
+            console.log( testPlayer.props() );
         })
         
     })

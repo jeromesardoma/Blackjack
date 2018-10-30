@@ -3,7 +3,7 @@ import './App.css';
 import Player from '../Player/player';
 import ActionBar from '../ActionBar/actionbar';
 import ReactDOM from 'react-dom';
-import { newDeckRequest } from './newDeckRequest';
+import newDeckRequest from './newDeckRequest';
 import { dealCardsRequest } from './dealCardsRequest';
 
 class App extends Component {
@@ -22,7 +22,6 @@ class App extends Component {
 		}
         
         // binds for imported functions
-        this.newDeckRequest = newDeckRequest.bind( this );
         this.dealCardsRequest = dealCardsRequest.bind( this );
 
         // binds for functions in App scope
@@ -41,9 +40,11 @@ class App extends Component {
     
 	// lifecycle functions
 	
-	componentDidMount() {
-		
-		this.newDeckRequest();
+	async componentDidMount() {
+        const data = await newDeckRequest(); 
+        this.setState({
+            deckId: data.deck_id
+        })
 	}
 
 	componentDidUpdate( prevState ) {

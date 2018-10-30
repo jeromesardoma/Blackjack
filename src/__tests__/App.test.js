@@ -26,12 +26,6 @@ describe( 'App', () => {
         wrapper.unmount();
     })
 
-    it( 'retrieves a new deck successfully', () => {
-        // console.log( wrapper.state() );
-
-        expect( wrapper.state( 'deckId' ) ).not.toEqual('');
-    })
-
     it( 'at launch, renders two Player components when "New Game" is clicked', () => {
         expect( wrapper.find( Player ).length ).toEqual(2);
     });
