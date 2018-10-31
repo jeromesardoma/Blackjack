@@ -4,7 +4,7 @@ import { newDeckRequest } from '../components/App/newDeckRequest';
 jest.mock( '../components/App/newDeckRequest' );
 
 describe( 'new deck request', () => {
-    it( 'retrieves a new deck successfully', async ( done ) => {
+    it( 'retrieves a new deck successfully', async () => {
         expect.assertions(1);
         await expect( newDeckRequest() ).resolves.toEqual({
             "success": true,
@@ -12,12 +12,13 @@ describe( 'new deck request', () => {
             "shuffled": true,
             "remaining": 52  
         })
-        done();
     })
 
-    it( 'throws an error if it does not retrieve deck', async ( done ) => {
+    it( 'throws an error if it does not retrieve deck', async () => {
         expect.assertions(1);
+        const newDeckRequest = jest.fn( async () => {
+            throw new Error('Error fetching deck.');
+        })
         await expect( newDeckRequest() ).rejects.toEqual( Error ('Error fetching deck.') );
-        done(); 
     })
 })

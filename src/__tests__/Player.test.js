@@ -21,9 +21,9 @@ describe( 'Player', () => {
         wrapper.find( "button" ).simulate( "click" );  
     })
 
-    afterEach( () => {
+/*     afterEach( () => {
         wrapper.unmount();
-    })
+    }) */
 
     
     // let testDealer = wrapper.find( '[type="dealer"]' );
@@ -33,8 +33,7 @@ describe( 'Player', () => {
 
         it( 'testPlayer exists', () => {
             let testPlayer = wrapper.find( '[type="player"]' );
-            expect( testPlayer.props() ).not.toBeNull;
-            console.log( testPlayer.props() );
+            expect( testPlayer.length ).toEqual(1);
         })
         
     })
