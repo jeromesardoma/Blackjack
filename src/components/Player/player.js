@@ -1,5 +1,6 @@
 import React, { Component } from 'react'; 
 import './player.css';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 class Player extends Component {
 	constructor( props ) {
@@ -44,9 +45,13 @@ class Player extends Component {
                         "alignItems": "center",
                         "justifyContent": "space-between" 
                         }}>
-                        <div>
+                        <ReactCSSTransitionGroup
+                            transitionName="card"
+                            transitionEnterTimeout={500}
+                            transitionLeaveTimeout={500}>
+                            
                             { cards }
-                        </div>
+                        </ReactCSSTransitionGroup>
                         { gameOver === false ? null : 
                             <div style={{ "width": 100 }}>
                                 <h6>Score</h6>

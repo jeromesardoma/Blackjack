@@ -7,10 +7,21 @@
 }
 
 .player {
-    width: 50%;
+    width: 60%;
     margin: 0px auto; 
     display: flex;
     flex-direction: column;
     justify-content: center;
+}
+
+/* animation css */
+
+.card-enter {
+    opacity: 0.01;
+}
+
+.card-enter.card-enter-active {
+    opacity: 1; 
+    transition: opacity 500ms ease-in;
 }
 

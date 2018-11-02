@@ -52,7 +52,7 @@ class App extends Component {
 	componentDidUpdate( prevState ) {
 		if( this.state.isDealersTurn === true ) {
 			if( this.state.dealerScore < 17 ) {
-				this.dealCardsRequest( 1, 'dealer' );
+                setTimeout( this.dealCardsRequest( 1, 'dealer' ), 6000 )
 			} else if( this.state.dealerScore >= 17 ) {
 				this.setState( prevState => {
 					return {
