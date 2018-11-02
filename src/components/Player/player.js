@@ -17,29 +17,44 @@ class Player extends Component {
 		const cards = hand.map( (card, index ) => {
 			if( gameOver === true && type === 'dealer' ) {
 				return(
-					<img
-						src={ card.image }
-						alt={ card.code } 
-						key={ card.code }
-						style={{ "height": 150 }}></img>
+                    <img
+                        src={ card.image }
+                        alt={ card.code } 
+                        key={ card.code }
+                        style={{ "height": 150 }}></img>
 				)
 			} else {
 				return(
-					<img 
-						src={ ( index === 0 && type === 'dealer' ) ? 'facedowncardv2.png' : card.image } 
-						alt={ card.code } 
-						key={ card.code }
-						style={{ "height": 150 }}></img>	
+                    <img 
+                    src={ ( index === 0 && type === 'dealer' ) ? 'facedowncardv2.png' : card.image } 
+                    alt={ card.code } 
+                    key={ card.code }
+                    style={{ "height": 150 }}></img>
 				)
 			}
 		});			
 		return(
-			<div>
-				<h3>{ type.substr(0,1).toUpperCase() + type.substr(1) }</h3>
-				{ gameOver === false ? null : <h5>Score: { score }</h5> }
-				<section>
-					{ cards }
-				</section>
+			<div className="player" >
+                <div>
+                    <h3>{ type.substr(0,1).toUpperCase() + type.substr(1) }</h3>
+                </div>
+                <div>
+                    <section style={{ 
+                        "display": "flex", 
+                        "alignItems": "center",
+                        "justifyContent": "space-between" 
+                        }}>
+                        <div>
+                            { cards }
+                        </div>
+                        { gameOver === false ? null : 
+                            <div style={{ "width": 100 }}>
+                                <h6>Score</h6>
+                                <div style={{ "fontSize": 72 }}>{ score }</div>
+                            </div>
+                        }
+                    </section>
+                </div>
 			</div>
 		)
 	};

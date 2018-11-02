@@ -5,3 +5,12 @@
     background-color: darkred;
     position: fixed;
 }
+
+.player {
+    width: 50%;
+    margin: 0px auto; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
